@@ -1,28 +1,35 @@
-require('dotenv').config()
+require("dotenv").config();
 const Pool = require("pg").Pool;
 
-const databaseConfig = { connectionString: process.env.DATABASE_URL};
+const databaseConfig = { connectionString: process.env.DATABASE_URL };
 
-const pool = new Pool(databaseConfig)
+const pool = new Pool(databaseConfig);
 
 const getProducts = (request, response) => {
-  pool.query("SELECT * FROM products ORDER BY product_id ASC", (error, results) => {
-    if (error) {
-      throw error;
+  pool.query(
+    "SELECT * FROM products ORDER BY product_id ASC",
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+      response.status(200).json(results.rows);
     }
-    response.status(200).json(results.rows);
-  });
+  );
 };
 
 const getProductById = (request, response) => {
   const id = parseInt(request.params.id);
 
-  pool.query("SELECT * FROM products WHERE product_id = $1", [id], (error, results) => {
-    if (error) {
-      throw error;
+  pool.query(
+    "SELECT * FROM products WHERE product_id = $1",
+    [id],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+      response.status(200).json(results.rows);
     }
-    response.status(200).json(results.rows);
-  });
+  );
 };
 
 const createProduct = (request, response) => {
@@ -59,12 +66,16 @@ const updateProduct = (request, response) => {
 const deleteProduct = (request, response) => {
   const id = parseInt(request.params.id);
 
-  pool.query("DELETE FROM products WHERE product_id = $1", [id], (error, results) => {
-    if (error) {
-      throw error;
+  pool.query(
+    "DELETE FROM products WHERE product_id = $1",
+    [id],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+      response.status(200).send(`User deleted with ID: ${id}`);
     }
-    response.status(200).send(`User deleted with ID: ${id}`);
-  });
+  );
 };
 
 module.exports = {
