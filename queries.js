@@ -1,8 +1,7 @@
 require("dotenv").config();
+
 const Pool = require("pg").Pool;
-
 const databaseConfig = { connectionString: process.env.DATABASE_URL };
-
 const pool = new Pool(databaseConfig);
 
 const getProducts = (request, response) => {
@@ -21,8 +20,8 @@ const getProductById = (request, response) => {
   const id = parseInt(request.params.id);
 
   pool.query(
-    "SELECT * FROM products WHERE product_id = $1",
-    [id],
+    `SELECT * FROM products WHERE product_id = ${id}`,
+    // [id],
     (error, results) => {
       if (error) {
         throw error;
@@ -33,11 +32,12 @@ const getProductById = (request, response) => {
 };
 
 const createProduct = (request, response) => {
-  const { name, price, description, image } = request.body;
+  const { name, price, description, image, category, promo } = request.body;
 
   pool.query(
-    "INSERT INTO products (name, price, description, image) VALUES ($1, $2, $3, $4)",
-    [name, price, description, image],
+    // `INSERT INTO products (name, price, description, image, category, promo) VALUES (${name}, ${price}, ${description}, ${image}, ${category}, ${promo})`,
+    `INSERT INTO products (name, price, description, image, category, promo) VALUES ($1, $2, $3, $4, $5, $6)`,
+    [name, price, description, image, category, promo],
     (error, results) => {
       if (error) {
         throw error;
@@ -49,11 +49,11 @@ const createProduct = (request, response) => {
 
 const updateProduct = (request, response) => {
   const id = parseInt(request.params.id);
-  const { name, price, description, image } = request.body;
+  const { name, price, description, image, category, promo } = request.body;
 
   pool.query(
-    "UPDATE products SET name = $1, price = $2, description = $3, image = $4 WHERE product_id = $5",
-    [name, price, description, image, id],
+    'UPDATE products SET name = $1, price = $2, description = $3, image = $4, category = $5, promo = $6 WHERE product_id = $7',
+    [name, price, description, image, category, promo, id],
     (error, results) => {
       if (error) {
         throw error;
@@ -67,8 +67,8 @@ const deleteProduct = (request, response) => {
   const id = parseInt(request.params.id);
 
   pool.query(
-    "DELETE FROM products WHERE product_id = $1",
-    [id],
+    `DELETE FROM products WHERE product_id = ${id}`,
+    // [id],
     (error, results) => {
       if (error) {
         throw error;
